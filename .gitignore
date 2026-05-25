@@ -1,0 +1,48 @@
+# Virtual Environment
+venv/
+.env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Logs
+logs/*.log
+logs/*.csv
+
+# MLflow
+mlruns/
+
+# Monitoring Reports
+monitoring/reports/
+monitoring/drift_reports/
+
+# Model Artifacts
+*.pkl
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Pytest
+.pytest_cache/
+
+# Build Files
+build/
+dist/
+*.egg-info/
+
+# Docker
+*.tar
+
+# Temporary Files
+temp/
+tmp/
