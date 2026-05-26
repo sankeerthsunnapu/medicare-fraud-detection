@@ -2,6 +2,10 @@ import pandas as pd
 
 from fastapi import APIRouter
 
+from fastapi import UploadFile, File
+from fastapi.responses import JSONResponse
+import tempfile
+
 from app.schemas.prediction_schema import PredictionResponse
 from app.services.prediction_service import predict_fraud
 
@@ -31,4 +35,37 @@ def predict():
 
     return PredictionResponse(
         prediction=prediction
+    )
+
+@router.post("/predict-file")
+async def predict_file(
+    file: UploadFile = File(...)
+):
+
+    with tempfile.NamedTemporaryFile(
+        delete=False,
+        suffix=".csv"
+    ) as temp_file:
+
+        temp_file.write(await file.read())
+
+        temp_file_path = temp_file.name
+
+    df = pd.read_csv(
+        temp_file_path,
+        encoding="utf-8-sig"
+    )
+
+    predictions = predict_fraud(df)
+
+    result = df.copy()
+
+    result["Prediction"] = predictions
+
+    return JSONResponse(
+        content={
+            "total_records": len(predictions),
+            "fraud_predictions": predictions.count("Fraud"),
+            "non_fraud_predictions": predictions.count("Not Fraud")
+        }
     )
