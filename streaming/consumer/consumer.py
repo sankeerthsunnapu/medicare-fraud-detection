@@ -1,0 +1,40 @@
+import json
+import pandas as pd
+
+from kafka import KafkaConsumer
+
+from app.services.prediction_service import predict_fraud
+
+
+TOPIC_NAME = "medicare_claims"
+
+
+consumer = KafkaConsumer(
+    TOPIC_NAME,
+    bootstrap_servers="localhost:9092",
+    auto_offset_reset="latest",
+    enable_auto_commit=True,
+    group_id="fraud-consumer-group",
+    value_deserializer=lambda x: json.loads(
+        x.decode("utf-8")
+    )
+)
+
+print("Fraud Prediction Consumer Started...")
+
+
+for message in consumer:
+
+    record = message.value
+
+    df = pd.DataFrame([record])
+
+    prediction = predict_fraud(df)[0]
+
+    print("\n========================")
+
+    print(f"Provider: {record.get('Provider')}")
+
+    print(f"Prediction: {prediction}")
+
+    print("========================")
