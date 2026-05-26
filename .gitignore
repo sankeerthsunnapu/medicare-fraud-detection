@@ -1,48 +1,18 @@
-# Virtual Environment
 venv/
-.env/
-
-# Python Cache
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
 
-# Jupyter
-.ipynb_checkpoints/
-
-# VS Code
+.git/
 .vscode/
 
-# Logs
-logs/*.log
-logs/*.csv
-
-# MLflow
 mlruns/
+mlflow/
 
-# Monitoring Reports
-monitoring/reports/
+notebooks/
+outputs/
+
+logs/
+
 monitoring/drift_reports/
 
-# Model Artifacts
-*.pkl
-
-# System Files
-.DS_Store
-Thumbs.db
-
-# Pytest
-.pytest_cache/
-
-# Build Files
-build/
-dist/
-*.egg-info/
-
-# Docker
-*.tar
-
-# Temporary Files
-temp/
-tmp/
+*.ipynb_checkpoints
