@@ -1,6 +1,9 @@
 import joblib
 import pandas as pd
 
+import mlflow
+import mlflow.sklearn
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
@@ -38,40 +41,69 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y
 )
 
-print("Training Random Forest model...")
+mlflow.set_experiment("Medicare Fraud Detection")
 
-model = RandomForestClassifier(
-    n_estimators=200,
-    max_depth=10,
-    class_weight="balanced",
-    random_state=42,
-    n_jobs=-1
-)
+with mlflow.start_run():
 
-model.fit(X_train, y_train)
+    print("Training Random Forest model...")
 
-print("Evaluating model...")
+    model = RandomForestClassifier(
+        n_estimators=200,
+        max_depth=10,
+        class_weight="balanced",
+        random_state=42,
+        n_jobs=-1
+    )
 
-y_pred = model.predict(X_test)
+    model.fit(X_train, y_train)
 
-y_prob = model.predict_proba(X_test)[:, 1]
+    print("Evaluating model...")
 
-accuracy = accuracy_score(y_test, y_pred)
+    y_pred = model.predict(X_test)
 
-roc_auc = roc_auc_score(y_test, y_prob)
+    y_prob = model.predict_proba(X_test)[:, 1]
 
-print(f"Accuracy: {accuracy:.4f}")
+    accuracy = accuracy_score(y_test, y_pred)
 
-print(f"ROC-AUC: {roc_auc:.4f}")
+    roc_auc = roc_auc_score(y_test, y_prob)
 
-print("\nClassification Report:\n")
+    mlflow.log_param(
+        "n_estimators",
+        200
+    )
 
-print(classification_report(y_test, y_pred))
+    mlflow.log_param(
+        "max_depth",
+        10
+    )
 
-print("Saving model...")
+    mlflow.log_metric(
+        "accuracy",
+        accuracy
+    )
 
-joblib.dump(model, MODEL_PATH)
+    mlflow.log_metric(
+        "roc_auc",
+        roc_auc
+    )
 
-joblib.dump(feature_columns, FEATURE_COLUMNS_PATH)
+    print(f"Accuracy: {accuracy:.4f}")
 
-print("Model saved successfully!")
+    print(f"ROC-AUC: {roc_auc:.4f}")
+
+    print("\nClassification Report:\n")
+
+    print(classification_report(y_test, y_pred))
+
+    print("Saving model...")
+
+    joblib.dump(model, MODEL_PATH)
+
+    joblib.dump(feature_columns, FEATURE_COLUMNS_PATH)
+
+    mlflow.sklearn.log_model(
+        model,
+        "random_forest_model"
+    )
+
+    print("Model saved successfully!")
