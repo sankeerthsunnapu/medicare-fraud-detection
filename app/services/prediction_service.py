@@ -12,9 +12,24 @@ def predict_fraud(data: pd.DataFrame):
 
     predictions = model.predict(processed_data)
 
-    prediction_labels = [
-        "Fraud" if pred == 1 else "Not Fraud"
-        for pred in predictions
-    ]
+    probabilities = model.predict_proba(processed_data)
 
-    return prediction_labels
+    results = []
+
+    for pred, prob in zip(predictions, probabilities):
+
+        confidence = max(prob) * 100
+
+        results.append(
+            {
+                "prediction":
+                    "Fraud"
+                    if pred == 1
+                    else "Not Fraud",
+
+                "confidence":
+                    round(confidence, 2)
+            }
+        )
+
+    return results

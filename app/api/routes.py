@@ -31,10 +31,11 @@ def predict():
         encoding="utf-8-sig"
     ).head(1)
 
-    prediction = predict_fraud(sample_data)[0]
+    result = predict_fraud(sample_data)[0]
 
     return PredictionResponse(
-        prediction=prediction
+        prediction=result["prediction"],
+        confidence=result["confidence"]
     )
 
 @router.post("/predict-file")
@@ -56,11 +57,12 @@ async def predict_file(
         encoding="utf-8-sig"
     )
 
-    predictions = predict_fraud(df)
+    results = predict_fraud(df)
 
-    result = df.copy()
-
-    result["Prediction"] = predictions
+    predictions = [
+        r["prediction"]
+        for r in results
+    ]
 
     return JSONResponse(
         content={

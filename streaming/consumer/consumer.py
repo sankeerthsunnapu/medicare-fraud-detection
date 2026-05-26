@@ -31,12 +31,17 @@ for message in consumer:
 
     df = pd.DataFrame([record])
 
-    prediction = predict_fraud(df)[0]
+    result = predict_fraud(df)[0]
+
+    prediction = result["prediction"]
+
+    confidence = result["confidence"]
 
     log_prediction(
     provider=record.get("Provider"),
     prediction=prediction
     )
+
 
     print("\n========================")
 
@@ -44,4 +49,6 @@ for message in consumer:
 
     print(f"Prediction: {prediction}")
 
+    print(f"Confidence: {confidence}%")
+    
     print("========================")
