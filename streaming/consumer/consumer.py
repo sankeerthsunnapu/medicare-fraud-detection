@@ -3,6 +3,8 @@ import pandas as pd
 
 from kafka import KafkaConsumer
 
+from app.services.logging_service import log_prediction
+
 from app.services.prediction_service import predict_fraud
 
 
@@ -30,6 +32,11 @@ for message in consumer:
     df = pd.DataFrame([record])
 
     prediction = predict_fraud(df)[0]
+
+    log_prediction(
+    provider=record.get("Provider"),
+    prediction=prediction
+    )
 
     print("\n========================")
 
